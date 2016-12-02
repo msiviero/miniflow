@@ -1,0 +1,21 @@
+{
+  "name": "miniflow",
+  "version": "1.0.0",
+  "description": "Simple unidirectional dataflow",
+  "main": "dist/index.js",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "babel src --presets babel-preset-es2015 --out-dir dist"
+  },
+  "author": "msiviero <m.siviero83@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^4.17.2",
+    "react": "^15.4.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-react": "^6.16.0"
+  }
+}
