@@ -28,9 +28,9 @@ var bindings = {};
 
 var dispatcher = function () {
   return {
-    registerStore: function registerStore(store) {
-      stores[store.name] = _lodash2.default.assign({ data: {} }, store);
-      bindings[store.name] = [];
+    store: function store(_store) {
+      stores[_store.name] = _lodash2.default.assign({ data: {} }, _store);
+      bindings[_store.name] = [];
     },
     bind: function bind(store, component) {
       bindings[store].push(component);
@@ -50,32 +50,9 @@ var dispatcher = function () {
         for (var _iterator = _lodash2.default.values(stores)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var store = _step.value;
 
-          if (_lodash2.default.has(store, 'actions.action') && _lodash2.default.isFunction(store.actions[action])) {
-            store.data = _lodash2.default.assign(store.data, store.actions[action].apply(null, [store.data, data]));
-            var _iteratorNormalCompletion2 = true;
-            var _didIteratorError2 = false;
-            var _iteratorError2 = undefined;
-
-            try {
-              for (var _iterator2 = bindings[store.name][Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                var component = _step2.value;
-
-                component.setState(store.data);
-              }
-            } catch (err) {
-              _didIteratorError2 = true;
-              _iteratorError2 = err;
-            } finally {
-              try {
-                if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                  _iterator2.return();
-                }
-              } finally {
-                if (_didIteratorError2) {
-                  throw _iteratorError2;
-                }
-              }
-            }
+          var actionFn = _lodash2.default.get(store, 'actions.' + action);
+          if (_lodash2.default.isFunction(actionFn)) {
+            store.data = _lodash2.default.assign(store.data, actionFn.call(null, store.data, data));
           }
         }
       } catch (err) {
@@ -108,6 +85,34 @@ var StoreBinding = function (_Component) {
   _createClass(StoreBinding, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
+
+      try {
+        for (var _iterator2 = _lodash2.default.get(this.props, 'stores', [])[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var store = _step2.value;
+
+          dispatcher.bind(store, this);
+        }
+      } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion2 && _iterator2.return) {
+            _iterator2.return();
+          }
+        } finally {
+          if (_didIteratorError2) {
+            throw _iteratorError2;
+          }
+        }
+      }
+    }
+  }, {
+    key: 'componentWillUnmount',
+    value: function componentWillUnmount() {
       var _iteratorNormalCompletion3 = true;
       var _didIteratorError3 = false;
       var _iteratorError3 = undefined;
@@ -116,7 +121,7 @@ var StoreBinding = function (_Component) {
         for (var _iterator3 = _lodash2.default.get(this.props, 'stores', [])[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
           var store = _step3.value;
 
-          dispatcher.bind(store, this);
+          dispatcher.unbind(store, this);
         }
       } catch (err) {
         _didIteratorError3 = true;
@@ -129,34 +134,6 @@ var StoreBinding = function (_Component) {
         } finally {
           if (_didIteratorError3) {
             throw _iteratorError3;
-          }
-        }
-      }
-    }
-  }, {
-    key: 'componentWillUnmount',
-    value: function componentWillUnmount() {
-      var _iteratorNormalCompletion4 = true;
-      var _didIteratorError4 = false;
-      var _iteratorError4 = undefined;
-
-      try {
-        for (var _iterator4 = _lodash2.default.get(this.props, 'stores', [])[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-          var store = _step4.value;
-
-          dispatcher.unbind(store, this);
-        }
-      } catch (err) {
-        _didIteratorError4 = true;
-        _iteratorError4 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion4 && _iterator4.return) {
-            _iterator4.return();
-          }
-        } finally {
-          if (_didIteratorError4) {
-            throw _iteratorError4;
           }
         }
       }
@@ -178,6 +155,15 @@ var StoreBinding = function (_Component) {
 
   return StoreBinding;
 }(_react.Component);
+
+dispatcher.store({
+  name: 's1',
+  actions: {
+    log: console.log
+  }
+});
+
+dispatcher.dispatch('log', { 'message': 'ok' });
 
 exports.dispatcher = dispatcher;
 exports.StoreBinding = StoreBinding;
