@@ -33,16 +33,16 @@ const dispatcher = (() => {
 })();
 
 
-const bindStore = (Wrapped) => {
+const bindStore = (storesToBind, Wrapped) => {
   return class StoreBinding extends Component {
     componentDidMount() {
-      for (let store of _.get(this.props, 'stores', [])) {
+      for (let store of storesToBind) {
         dispatcher.bind(store, this);
       }
     }
 
     componentWillUnmount() {
-      for (let store of _.get(this.props, 'stores', [])) {
+      for (let store of storesToBind) {
         dispatcher.unbind(store, this);
       }
     }
