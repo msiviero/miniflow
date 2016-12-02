@@ -1,8 +1,11 @@
 {
   "name": "miniflow",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Simple unidirectional dataflow",
   "main": "dist/index.js",
+  "directories": {
+    "lib": "./dist"
+  },
   "scripts": {
     "clean": "rm -rf dist",
     "build": "babel src --out-dir dist"
