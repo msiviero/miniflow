@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
-import { View } from 'react-native';
 
 const stores = {};
 const bindings = {};
@@ -34,53 +33,26 @@ const dispatcher = (() => {
 })();
 
 
-class NativeStoreBinding extends Component {
-  componentDidMount() {
-    for (let store of _.get(this.props, 'stores', [])) {
-      dispatcher.bind(store, this);
+const bindStore = (Wrapped) => {
+  return class StoreBinding extends Component {
+    componentDidMount() {
+      for (let store of _.get(this.props, 'stores', [])) {
+        dispatcher.bind(store, this);
+      }
     }
-  }
 
-  componentWillUnmount() {
-    for (let store of _.get(this.props, 'stores', [])) {
-      dispatcher.unbind(store, this);
+    componentWillUnmount() {
+      for (let store of _.get(this.props, 'stores', [])) {
+        dispatcher.unbind(store, this);
+      }
+    }
+    render() {
+      return <Wrapped {...this.state} />
     }
   }
-  render() {
-    return (
-      <View>
-        {React.Children.map(this.props.children, (child) =>
-          (React.cloneElement(child, Object.assign({}, this.state)
-          )))}
-      </View>
-    );
-  }
-}
-
-class StoreBinding extends Component {
-  componentDidMount() {
-    for (let store of _.get(this.props, 'stores', [])) {
-      dispatcher.bind(store, this);
-    }
-  }
-
-  componentWillUnmount() {
-    for (let store of _.get(this.props, 'stores', [])) {
-      dispatcher.unbind(store, this);
-    }
-  }
-  render() {
-    return (
-      <span>
-        {React.Children.map(this.props.children, (child) =>
-          (React.cloneElement(child, Object.assign({}, this.state)
-          )))}
-      </span>
-    );
-  }
-}
+};
 
 export {
   dispatcher,
-  StoreBinding
+  bindStore
 }
