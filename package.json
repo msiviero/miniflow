@@ -8,6 +8,10 @@
     "build": "babel src --presets babel-preset-es2015 --out-dir dist"
   },
   "author": "msiviero <m.siviero83@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/msiviero/miniflux"
+  },
   "license": "MIT",
   "dependencies": {
     "lodash": "^4.17.2",
