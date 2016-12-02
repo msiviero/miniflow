@@ -10,7 +10,7 @@
   "author": "msiviero <m.siviero83@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/msiviero/miniflux"
+    "url": "https://github.com/msiviero/miniflow"
   },
   "license": "MIT",
   "dependencies": {
