@@ -23,6 +23,9 @@ const dispatcher = (() => {
         const actionFn = _.get(store, 'actions.' + action);
         if (_.isFunction(actionFn)) {
           store.data = _.assign(store.data, actionFn.call(null, store.data, data));
+          for (let component of bindings[store.name]) {
+            component.setState(store.data);
+          }
         }
       }
     }
