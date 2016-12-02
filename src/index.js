@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
+import { View } from 'react-native';
 
 const stores = {};
 const bindings = {};
@@ -31,6 +32,30 @@ const dispatcher = (() => {
     }
   };
 })();
+
+
+class NativeStoreBinding extends Component {
+  componentDidMount() {
+    for (let store of _.get(this.props, 'stores', [])) {
+      dispatcher.bind(store, this);
+    }
+  }
+
+  componentWillUnmount() {
+    for (let store of _.get(this.props, 'stores', [])) {
+      dispatcher.unbind(store, this);
+    }
+  }
+  render() {
+    return (
+      <View>
+        {React.Children.map(this.props.children, (child) =>
+          (React.cloneElement(child, Object.assign({}, this.state)
+          )))}
+      </View>
+    );
+  }
+}
 
 class StoreBinding extends Component {
   componentDidMount() {

@@ -167,13 +167,9 @@ var StoreBinding = function (_Component) {
     value: function render() {
       var _this2 = this;
 
-      return _react2.default.createElement(
-        'span',
-        null,
-        _react2.default.Children.map(this.props.children, function (child) {
-          return _react2.default.cloneElement(child, Object.assign({}, _this2.state));
-        })
-      );
+      return [_react2.default.Children.map(this.props.children, function (child) {
+        return _react2.default.cloneElement(child, Object.assign({}, _this2.state));
+      })];
     }
   }]);
 
