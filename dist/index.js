@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.bindStore = exports.dispatcher = undefined;
+exports.bindStores = exports.dispatcher = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -97,17 +97,22 @@ var dispatcher = function () {
   };
 }();
 
-var bindStore = function bindStore(Wrapped) {
+function bindStores(WrappedComponent, storesToBind) {
+
+  if (!_lodash2.default.isArray(storesToBind)) {
+    throw new Error('Stores is not an array');
+  }
+
   return function (_Component) {
-    _inherits(StoreBinding, _Component);
+    _inherits(StoreWrapper, _Component);
 
-    function StoreBinding() {
-      _classCallCheck(this, StoreBinding);
+    function StoreWrapper() {
+      _classCallCheck(this, StoreWrapper);
 
-      return _possibleConstructorReturn(this, (StoreBinding.__proto__ || Object.getPrototypeOf(StoreBinding)).apply(this, arguments));
+      return _possibleConstructorReturn(this, (StoreWrapper.__proto__ || Object.getPrototypeOf(StoreWrapper)).apply(this, arguments));
     }
 
-    _createClass(StoreBinding, [{
+    _createClass(StoreWrapper, [{
       key: 'componentDidMount',
       value: function componentDidMount() {
         var _iteratorNormalCompletion3 = true;
@@ -115,7 +120,7 @@ var bindStore = function bindStore(Wrapped) {
         var _iteratorError3 = undefined;
 
         try {
-          for (var _iterator3 = _lodash2.default.get(this.props, 'stores', [])[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+          for (var _iterator3 = storesToBind[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
             var store = _step3.value;
 
             dispatcher.bind(store, this);
@@ -143,7 +148,7 @@ var bindStore = function bindStore(Wrapped) {
         var _iteratorError4 = undefined;
 
         try {
-          for (var _iterator4 = _lodash2.default.get(this.props, 'stores', [])[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+          for (var _iterator4 = storesToBind[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
             var store = _step4.value;
 
             dispatcher.unbind(store, this);
@@ -166,13 +171,13 @@ var bindStore = function bindStore(Wrapped) {
     }, {
       key: 'render',
       value: function render() {
-        return _react2.default.createElement(Wrapped, this.state);
+        return _react2.default.createElement(WrappedComponent, _lodash2.default.assign({}, this.state));
       }
     }]);
 
-    return StoreBinding;
+    return StoreWrapper;
   }(_react.Component);
 };
 
 exports.dispatcher = dispatcher;
-exports.bindStore = bindStore;
+exports.bindStores = bindStores;

@@ -1,6 +1,6 @@
 {
   "name": "miniflow",
-  "version": "1.4.6",
+  "version": "1.4.7",
   "description": "Simple unidirectional dataflow",
   "main": "dist/index.js",
   "directories": {
@@ -8,6 +8,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
+    "prepublish": "npm run clean && npm run build",
     "build": "babel src --out-dir dist"
   },
   "author": "msiviero <m.siviero83@gmail.com>",
