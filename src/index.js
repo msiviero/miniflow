@@ -33,26 +33,30 @@ const dispatcher = (() => {
 })();
 
 
-const bindStore = (storesToBind, Wrapped) => {
-  return class StoreBinding extends Component {
+function bindStores(WrappedComponent, storesToBind) {
+
+  if (!_.isArray(storesToBind)) {
+    throw new Error('Stores is not an array');
+  }
+
+  return class StoreWrapper extends Component {
     componentDidMount() {
       for (let store of storesToBind) {
         dispatcher.bind(store, this);
       }
     }
-
     componentWillUnmount() {
       for (let store of storesToBind) {
         dispatcher.unbind(store, this);
       }
     }
     render() {
-      return <Wrapped {...this.state} />
+      return <WrappedComponent {...(_.assign({}, this.state)) } />
     }
   }
 };
 
 export {
   dispatcher,
-  bindStore
+  bindStores
 }
