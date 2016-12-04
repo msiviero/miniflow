@@ -113,8 +113,8 @@ function bindStores(WrappedComponent, storesToBind) {
     }
 
     _createClass(StoreWrapper, [{
-      key: 'componentDidMount',
-      value: function componentDidMount() {
+      key: 'componentWillMount',
+      value: function componentWillMount() {
         var _iteratorNormalCompletion3 = true;
         var _didIteratorError3 = false;
         var _iteratorError3 = undefined;

@@ -40,7 +40,7 @@ function bindStores(WrappedComponent, storesToBind) {
   }
 
   return class StoreWrapper extends Component {
-    componentDidMount() {
+    componentWillMount() {
       for (let store of storesToBind) {
         dispatcher.bind(store, this);
       }
