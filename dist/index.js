@@ -41,43 +41,25 @@ var dispatcher = function () {
         return item === component;
       });
     },
-    dispatch: function dispatch(action, data) {
+    dispatch: function dispatch(store, action, data) {
+      var instance = stores[store];
+      if (!instance) {
+        throw new Error('Store ' + store + ' doesn\'t exist');
+      }
+      var actionFn = _lodash2.default.get(instance, 'actions.' + action);
+      if (!_lodash2.default.isFunction(actionFn)) {
+        throw new Error('Store ' + store + ' doesn\'t have a ' + action + ' action');
+      }
+      instance.data = _lodash2.default.assign(instance.data, actionFn.call(null, instance.data, data));
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
       var _iteratorError = undefined;
 
       try {
-        for (var _iterator = _lodash2.default.values(stores)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var store = _step.value;
+        for (var _iterator = bindings[store][Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var component = _step.value;
 
-          var actionFn = _lodash2.default.get(store, 'actions.' + action);
-          if (_lodash2.default.isFunction(actionFn)) {
-            store.data = _lodash2.default.assign(store.data, actionFn.call(null, store.data, data));
-            var _iteratorNormalCompletion2 = true;
-            var _didIteratorError2 = false;
-            var _iteratorError2 = undefined;
-
-            try {
-              for (var _iterator2 = bindings[store.name][Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                var component = _step2.value;
-
-                component.setState(store.data);
-              }
-            } catch (err) {
-              _didIteratorError2 = true;
-              _iteratorError2 = err;
-            } finally {
-              try {
-                if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                  _iterator2.return();
-                }
-              } finally {
-                if (_didIteratorError2) {
-                  throw _iteratorError2;
-                }
-              }
-            }
-          }
+          component.setState(instance.data);
         }
       } catch (err) {
         _didIteratorError = true;
@@ -103,8 +85,8 @@ function bindStores(WrappedComponent, storesToBind) {
     throw new Error('Stores is not an array');
   }
 
-  return function (_Component) {
-    _inherits(StoreWrapper, _Component);
+  return function (_React$Component) {
+    _inherits(StoreWrapper, _React$Component);
 
     function StoreWrapper() {
       _classCallCheck(this, StoreWrapper);
@@ -115,6 +97,34 @@ function bindStores(WrappedComponent, storesToBind) {
     _createClass(StoreWrapper, [{
       key: 'componentWillMount',
       value: function componentWillMount() {
+        var _iteratorNormalCompletion2 = true;
+        var _didIteratorError2 = false;
+        var _iteratorError2 = undefined;
+
+        try {
+          for (var _iterator2 = storesToBind[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+            var store = _step2.value;
+
+            dispatcher.bind(store, this);
+          }
+        } catch (err) {
+          _didIteratorError2 = true;
+          _iteratorError2 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+              _iterator2.return();
+            }
+          } finally {
+            if (_didIteratorError2) {
+              throw _iteratorError2;
+            }
+          }
+        }
+      }
+    }, {
+      key: 'componentWillUnmount',
+      value: function componentWillUnmount() {
         var _iteratorNormalCompletion3 = true;
         var _didIteratorError3 = false;
         var _iteratorError3 = undefined;
@@ -123,7 +133,7 @@ function bindStores(WrappedComponent, storesToBind) {
           for (var _iterator3 = storesToBind[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
             var store = _step3.value;
 
-            dispatcher.bind(store, this);
+            dispatcher.unbind(store, this);
           }
         } catch (err) {
           _didIteratorError3 = true;
@@ -141,34 +151,6 @@ function bindStores(WrappedComponent, storesToBind) {
         }
       }
     }, {
-      key: 'componentWillUnmount',
-      value: function componentWillUnmount() {
-        var _iteratorNormalCompletion4 = true;
-        var _didIteratorError4 = false;
-        var _iteratorError4 = undefined;
-
-        try {
-          for (var _iterator4 = storesToBind[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-            var store = _step4.value;
-
-            dispatcher.unbind(store, this);
-          }
-        } catch (err) {
-          _didIteratorError4 = true;
-          _iteratorError4 = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion4 && _iterator4.return) {
-              _iterator4.return();
-            }
-          } finally {
-            if (_didIteratorError4) {
-              throw _iteratorError4;
-            }
-          }
-        }
-      }
-    }, {
       key: 'render',
       value: function render() {
         return _react2.default.createElement(WrappedComponent, _lodash2.default.assign({}, this.state));
@@ -176,8 +158,8 @@ function bindStores(WrappedComponent, storesToBind) {
     }]);
 
     return StoreWrapper;
-  }(_react.Component);
-};
+  }(_react2.default.Component);
+}
 
 exports.dispatcher = dispatcher;
 exports.bindStores = bindStores;
