@@ -1,6 +1,6 @@
 {
   "name": "miniflow",
-  "version": "1.4.8",
+  "version": "1.4.9",
   "description": "Simple unidirectional dataflow",
   "main": "dist/index.js",
   "directories": {
